@@ -149,8 +149,8 @@ def base_models_figure(out: Path):
     style(ax, "Exact exploitability in Leduc hold'em (equilibrium = 0)", "Exploitability (milli-antes per hand)", "")
     ax.grid(axis="x", color=GRID, linewidth=0.8)
     ax.grid(axis="y", visible=False)
-    ax.legend(frameon=False, fontsize=8, labelcolor=INK2, loc="upper center", bbox_to_anchor=(0.5, -0.3), ncol=2)
-    fig.tight_layout()
+    fig.legend(*ax.get_legend_handles_labels(), frameon=False, fontsize=8, labelcolor=INK2, loc="lower center", ncol=2)
+    fig.tight_layout(rect=(0, 0.06, 1, 1))
     fig.savefig(out, facecolor=SURFACE)
     plt.close(fig)
 

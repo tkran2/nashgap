@@ -17,16 +17,19 @@ by the solver, comparing four reward designs.
    whether it pairs the public card with 100%. Yet the action probabilities barely
    move with it: *card sensitivity* (the total-variation distance between strategies
    at information sets that differ only in the private card) is 0.013, against 0.569
-   at equilibrium. Every model tested is card-blind (0.01 to 0.03).
-2. **So differences between models are differences in card-blind style, not skill.**
-   Qwen2.5 models bet about 93% of the time with any hand and are as exploitable as
-   uniform random play (2,343 to 2,507 milli-antes per hand). Qwen3-0.6B checks and
-   folds instead (bets 4%, folds to 61% of bets) and scores 1,188, because a passive
-   card-blind policy happens to be cheaper to exploit than an aggressive one.
+   at equilibrium. All six models tested, from 0.5B to 3B parameters, are card-blind
+   (0.013 to 0.058).
+2. **So differences between models are differences in card-blind style, not skill,
+   and scale does not help.** Qwen3-0.6B checks and folds (bets 4%, folds to 61% of
+   bets) and scores 1,188 milli-antes per hand; OLMo-2-1B mixes and scores 1,608. The
+   larger models are *more* exploitable because they bet with any hand: Qwen3-1.7B
+   (bets 97%) scores 2,486 and Qwen2.5-3B scores 3,282, worse than uniform random play
+   (2,374).
 3. **Renaming the game changes the style, not the skill.** In an isomorphic tile game
    with every poker word removed, Qwen2.5-0.5B flips from betting 94% of the time to
-   11%, and is just as exploitable (2,358 vs 2,343); Qwen3-0.6B gets worse (1,783).
-   The "strategy" is a prior attached to vocabulary.
+   11%, and is just as exploitable (2,358 vs 2,343). Qwen3-0.6B gets worse without the
+   poker words (1,783), Qwen2.5-3B gets better (2,400 instead of 3,282). The "strategy"
+   is a prior attached to vocabulary.
 4. **Using the solver's equilibrium values as the RL reward does not work, and the
    reward curve hides it.** At equilibrium every action a player mixes between has the
    same value, so that reward cannot teach how often to bluff. With a tabular policy
@@ -112,12 +115,15 @@ Exploitability in milli-antes per hand (lower is better), from exact strategies 
 | Model | Leduc, poker framing | Leduc, no poker words | Kuhn, poker framing | Card sensitivity | Bets when unopposed | Folds to a bet |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Qwen3-0.6B | 1,188 | 1,783 | 423 | 0.019 | 4% | 61% |
+| OLMo-2-0425-1B-Instruct | 1,608 | 1,556 | 321 | 0.025 | 36% | 33% |
 | Qwen2.5-0.5B-Instruct | 2,343 | 2,358 | 335 | 0.013 | 95% | 7% |
+| Qwen3-1.7B | 2,486 | 2,724 | 333 | 0.058 | 97% | 0% |
 | Qwen2.5-1.5B-Instruct | 2,507 | 2,476 | 333 | 0.021 | 92% | 4% |
+| Qwen2.5-3B-Instruct | 3,282 | 2,400 | 299 | 0.028 | 84% | 11% |
 | *equilibrium (reference)* | 0 | 0 | 0 | 0.569 | 46% | 48% |
 | *uniform random play (reference)* | 2,374 | 2,374 | 458 | 0.000 | 50% | 42% |
 
-Qwen3 models are run with thinking disabled, so their first reply token is the action.
+Qwen3 models are run with thinking disabled, so their first reply token is the action. Qwen2.5-3B runs in bfloat16 (the others in float32) to fit in memory.
 
 ![Exact exploitability of open models](figures/base_models.png)
 

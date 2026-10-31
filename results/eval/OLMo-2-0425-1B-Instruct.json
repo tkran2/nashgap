@@ -1,0 +1,118 @@
+{
+  "model": "allenai/OLMo-2-0425-1B-Instruct",
+  "dtype": "float32",
+  "results": {
+    "kuhn/poker": {
+      "exploitability_milli_antes": 320.76157960780984,
+      "greedy_exploitability_milli_antes": 416.66666666666663,
+      "br_value_vs_model_as_p1": 0.323494781403854,
+      "br_value_vs_model_as_p0": 0.31802837781176563,
+      "ev_vs_nash_milli_antes": -96.9433303832681,
+      "format_mass_mean": 0.9919905662536621,
+      "format_mass_min": 0.9906269311904907,
+      "prompt_tokens": [
+        142,
+        56.75
+      ],
+      "behavior": {
+        "bet_rate": {
+          "Jack": 0.39390598553699296,
+          "King": 0.5672532618045807,
+          "Queen": 0.4001201054252631
+        },
+        "fold_rate": {
+          "Jack": 0.22847386065675546,
+          "King": 0.2065445360059056,
+          "Queen": 0.1938257937573011
+        },
+        "card_sensitivity": 0.06954371529797089
+      },
+      "seconds": 6.485961437225342
+    },
+    "kuhn/abstract": {
+      "exploitability_milli_antes": 332.74277888938946,
+      "greedy_exploitability_milli_antes": 333.3333333333333,
+      "br_value_vs_model_as_p1": 0.33399243988648974,
+      "br_value_vs_model_as_p0": 0.3314931178922892,
+      "ev_vs_nash_milli_antes": -111.14631333382394,
+      "format_mass_mean": 0.9909821401039759,
+      "format_mass_min": 0.985478937625885,
+      "prompt_tokens": [
+        152,
+        56.75
+      ],
+      "behavior": {
+        "bet_rate": {
+          "Jack": 0.04588492013713271,
+          "King": 0.05650526116758022,
+          "Queen": 0.04919647619924287
+        },
+        "fold_rate": {
+          "Jack": 0.1785428581289561,
+          "King": 0.16778006627974393,
+          "Queen": 0.14779182040386324
+        },
+        "card_sensitivity": 0.013790459585180118
+      },
+      "seconds": 6.569213390350342
+    },
+    "leduc/poker": {
+      "exploitability_milli_antes": 1608.0751788886075,
+      "greedy_exploitability_milli_antes": 899.9999999999999,
+      "br_value_vs_model_as_p1": 1.4488272189827531,
+      "br_value_vs_model_as_p0": 1.7673231387944621,
+      "ev_vs_nash_milli_antes": -592.1461398235492,
+      "format_mass_mean": 0.9827972762286663,
+      "format_mass_min": 0.966553807258606,
+      "prompt_tokens": [
+        204,
+        78.5625
+      ],
+      "behavior": {
+        "bet_rate": {
+          "Jack": 0.3464994412575959,
+          "King": 0.3979240059881866,
+          "Queen": 0.35821089410240936,
+          "pair": 0.3504726738280739
+        },
+        "fold_rate": {
+          "Jack": 0.3306774591730361,
+          "King": 0.3324899382693393,
+          "Queen": 0.32963983136557906,
+          "pair": 0.3238325509399498
+        },
+        "card_sensitivity": 0.024934486610929944
+      },
+      "seconds": 204.18273258209229
+    },
+    "leduc/abstract": {
+      "exploitability_milli_antes": 1555.8693949889785,
+      "greedy_exploitability_milli_antes": 1466.6666666666667,
+      "br_value_vs_model_as_p1": 1.5143380768589707,
+      "br_value_vs_model_as_p0": 1.5974007131189858,
+      "ev_vs_nash_milli_antes": -690.5264936763458,
+      "format_mass_mean": 0.9843499058236679,
+      "format_mass_min": 0.9695014953613281,
+      "prompt_tokens": [
+        220,
+        80.5
+      ],
+      "behavior": {
+        "bet_rate": {
+          "Jack": 0.1333215779327728,
+          "King": 0.14263999502807426,
+          "Queen": 0.13704462823598662,
+          "pair": 0.14509332562089663
+        },
+        "fold_rate": {
+          "Jack": 0.0779285536865178,
+          "King": 0.07854955345492066,
+          "Queen": 0.0775668873476537,
+          "pair": 0.07244571887121393
+        },
+        "card_sensitivity": 0.006563158457078725
+      },
+      "seconds": 222.955237865448
+    }
+  }
+}
