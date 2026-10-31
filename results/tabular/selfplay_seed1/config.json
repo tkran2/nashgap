@@ -1,0 +1,17 @@
+{
+  "reward": "selfplay",
+  "steps": 3000,
+  "batch_size": 32,
+  "group_size": 8,
+  "lr": 0.05,
+  "beta": 0.0,
+  "clip": 0.2,
+  "refresh": 5,
+  "eval_every": 100,
+  "seed": 1,
+  "extra": {
+    "policy": "tabular",
+    "game": "leduc",
+    "init": "uniform"
+  }
+}
