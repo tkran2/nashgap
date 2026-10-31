@@ -1,0 +1,16 @@
+[project]
+name = "nashgap"
+version = "0.1.0"
+description = "Exact exploitability of language models in imperfect-information games, and RL that reduces it"
+requires-python = ">=3.10"
+dependencies = ["numpy", "scipy"]
+
+[project.optional-dependencies]
+llm = ["torch", "transformers", "peft", "matplotlib"]
+dev = ["pytest"]
+
+[tool.setuptools]
+packages = ["nashgap"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
