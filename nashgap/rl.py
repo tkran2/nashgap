@@ -30,6 +30,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
+from .analysis import behavior_summary
 from .games import GameTree
 from .solvers import action_values, best_response, combine, exploitability
 
@@ -143,6 +144,7 @@ def train(policy, params, tree: GameTree, nash: np.ndarray, cfg: TrainConfig, ou
             "greedy_exploitability": exploitability(tree, g).milli_antes,
             "nash_q_reward": float((strat * nash_q).sum(1)[nash_valid].mean()),
             "entropy": entropy(strat),
+            "card_sensitivity": behavior_summary(tree, strat)["card_sensitivity"],
             "time": time.time() - t0,
             **extra,
         }
@@ -158,9 +160,10 @@ def train(policy, params, tree: GameTree, nash: np.ndarray, cfg: TrainConfig, ou
         (out_dir / "log.jsonl").write_text("")
 
     t0 = time.time()
-    strat = policy.strategy()
-    ref_logp_all, _ = policy.action_logprobs(range(tree.num_infosets))
+    ref_logp_all, _ = policy.action_logprobs(range(tree.num_infosets))  # the initial policy is the KL reference
     ref_logp_all = ref_logp_all.detach()
+    strat = np.where(tree.legal_mask, torch.exp(ref_logp_all).nan_to_num(0.0).double().numpy(), 0.0)
+    strat /= strat.sum(axis=1, keepdims=True)
     history = [evaluate(0, strat, {})]
     strat_step = 0  # the step whose weights produced `strat`
     q = valid = None
