@@ -11,27 +11,42 @@ by the solver, comparing four reward designs.
 
 ## Findings
 
-1. **Small instruction-tuned models are about as exploitable as random play in Leduc
-   hold'em, because they ignore their own cards.** Qwen2.5-0.5B and 1.5B bet roughly 93%
-   of the time whether they hold a pair or a Jack. Their *card sensitivity* (how much
-   the strategy changes when only the private card changes, as total variation
-   distance) is 0.01 to 0.02; the equilibrium's is 0.57.
-2. **Renaming the game changes behavior but not skill.** In an isomorphic tile game
+1. **The models know their card and ignore it.** For Qwen2.5-0.5B, a linear probe on the
+   hidden state at the answer position recovers the player's private card with 100%
+   cross-validated accuracy (34% with shuffled labels, chance is 33%), and recovers
+   whether it pairs the public card with 100%. Yet the action probabilities barely
+   move with it: *card sensitivity* (the total-variation distance between strategies
+   at information sets that differ only in the private card) is 0.013, against 0.569
+   at equilibrium. Every model tested is card-blind (0.01 to 0.03).
+2. **So differences between models are differences in card-blind style, not skill.**
+   Qwen2.5 models bet about 93% of the time with any hand and are as exploitable as
+   uniform random play (2,343 to 2,507 milli-antes per hand). Qwen3-0.6B checks and
+   folds instead (bets 4%, folds to 61% of bets) and scores 1,188, because a passive
+   card-blind policy happens to be cheaper to exploit than an aggressive one.
+3. **Renaming the game changes the style, not the skill.** In an isomorphic tile game
    with every poker word removed, Qwen2.5-0.5B flips from betting 94% of the time to
-   betting 11% of the time, and is just as exploitable (2,358 vs 2,343). Its "strategy" is a prior
-   attached to vocabulary, not a reading of the rules.
-3. **Using the solver's equilibrium values as the RL reward does not work, and the
+   11%, and is just as exploitable (2,358 vs 2,343); Qwen3-0.6B gets worse (1,783).
+   The "strategy" is a prior attached to vocabulary.
+4. **Using the solver's equilibrium values as the RL reward does not work, and the
    reward curve hides it.** At equilibrium every action a player mixes between has the
-   same value, so that reward cannot teach how often to bluff. In the tabular setting
+   same value, so that reward cannot teach how often to bluff. With a tabular policy
    it finishes with a *higher* reward than the equilibrium itself (+0.11 vs -0.26 chips)
-   while exploitability stays near uniform random play (about 2,100 vs 2,374
-   milli-antes).
-4. **Rewarding the policy against a best response to itself, recomputed as it learns
-   (exploitability descent), works.** Same GRPO update, same policy: exploitability
-   falls from 2,374 to about 100 milli-antes. Self-play with exact values cycles and
-   ends where it started.
-
-<!-- LLM_RESULTS -->
+   while staying near uniform random play (2,087 vs 2,374). On the LLM the reward rises
+   (-0.92 to -0.78) while exploitability does not move (2,343 to 2,367). Self-play
+   behaves the same way.
+5. **Rewarding the policy against a best response to itself, recomputed as it learns
+   (exploitability descent), is the reward that works.** With a tabular policy,
+   exploitability falls from 2,374 to about 100. On the LLM it is the only reward that
+   lowered exploitability (2,343 to 1,465, -37%), but the model converged to a
+   card-blind "always check or call" policy. Supervised distillation toward the
+   equilibrium also stayed card-blind. Within this CPU budget (30 to 40 steps, LoRA on
+   the top 8 of 24 layers), the bottleneck is wiring an already-represented card into
+   the action readout, not the reward.
+6. **A GRPO failure mode worth knowing.** At a learning rate that is ordinary for LoRA
+   fine-tuning (2e-4), the policy collapsed to a single action at every information
+   set within 10 steps. Once all G samples in every group are identical, every
+   group-normalized advantage is zero and learning stops for good (100% zero-variance
+   groups from step 20 on). At 1e-5 with a KL penalty it learned steadily.
 
 ## How it works
 
@@ -92,7 +107,17 @@ update.
 
 ## Base models
 
-<!-- BASE_TABLE -->
+Exploitability in milli-antes per hand (lower is better), from exact strategies read off the next-token distribution:
+
+| Model | Leduc, poker framing | Leduc, no poker words | Kuhn, poker framing | Card sensitivity | Bets when unopposed | Folds to a bet |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Qwen3-0.6B | 1,188 | 1,783 | 423 | 0.019 | 4% | 61% |
+| Qwen2.5-0.5B-Instruct | 2,343 | 2,358 | 335 | 0.013 | 95% | 7% |
+| Qwen2.5-1.5B-Instruct | 2,507 | 2,476 | 333 | 0.021 | 92% | 4% |
+| *equilibrium (reference)* | 0 | 0 | 0 | 0.569 | 46% | 48% |
+| *uniform random play (reference)* | 2,374 | 2,374 | 458 | 0.000 | 50% | 42% |
+
+Qwen3 models are run with thinking disabled, so their first reply token is the action.
 
 ![Exact exploitability of open models](figures/base_models.png)
 
@@ -110,6 +135,29 @@ The same GRPO update on a softmax table with one free logit per action (3 seeds,
 
 ![Tabular exploitability](figures/tabular_exploitability.png)
 ![Tabular reward](figures/tabular_reward.png)
+
+## Reward design, Qwen2.5-0.5B with LoRA
+
+GRPO as above on Qwen2.5-0.5B-Instruct, LoRA rank 16 on the top 8 layers, 32
+information sets per step, G = 8, learning rate 1e-5 with KL coefficient 0.04 (the
+distillation reference uses supervised cross-entropy at 2e-4). Exact exploitability is
+measured every 10 steps from the full 288-prompt strategy. One seed per run on CPU.
+
+| Run | Steps | Exploitability, start -> end | Solver-value reward | Card sensitivity | Entropy |
+| --- | ---: | --- | --- | ---: | ---: |
+| `nash_q` | 30 | 2,343 -> 2,367 | -0.92 -> -0.78 | 0.003 | 0.13 |
+| `selfplay` | 30 | 2,343 -> 2,370 | -0.92 -> -0.76 | 0.002 | 0.07 |
+| `br_q` | 30 | 2,343 -> **1,465** | -0.92 -> -1.05 | 0.007 | 0.20 |
+| `distill` (supervised) | 40 | 2,343 -> 1,935 (min 1,857) | -0.92 -> -1.46 | 0.033 | 0.80 |
+| `br_q` at lr 2e-4 (collapsed) | 80 | 2,343 -> 1,467 by step 10, then frozen | | 0.000 | 0.00 |
+
+The rank order matches the tabular experiment: the two rewards that look best on the
+solver-value curve are the two that do nothing for exploitability. The greedy policy
+`br_q` reaches is "always check or call" (1,467 exactly), a card-blind pure strategy;
+for comparison, "check, call, but fold to any bet" scores 1,000 and the equilibrium 0.
+
+![LLM exploitability](figures/llm_exploitability.png)
+![LLM reward](figures/llm_reward.png)
 
 ## Reproduce
 

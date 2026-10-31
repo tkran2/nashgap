@@ -85,7 +85,10 @@ def training_figure(folder: Path, out: Path, title: str, metric="exploitability"
         vals = np.array([[r[metric] for r in s[:n]] for s in seeds])
         mean = vals.mean(0)
         label = REWARD_LABEL[reward] + (f", {len(seeds)} seeds" if len(seeds) > 1 else "")
-        ax.plot(steps[:n], mean, color=REWARD_COLOR[reward], linewidth=2, label=label)
+        sparse = n <= 12  # few evaluation points: mark them
+        ax.plot(steps[:n], mean, color=REWARD_COLOR[reward], linewidth=2, label=label,
+                linestyle=(0, (5, 2)) if reward == "nash_q" else "-",
+                marker="o" if sparse else None, markersize=4 if sparse else 0, zorder=3 if reward == "nash_q" else 2)
         if len(seeds) > 1:
             ax.fill_between(steps[:n], vals.min(0), vals.max(0), color=REWARD_COLOR[reward], alpha=0.15, linewidth=0)
         ends.append((steps[n - 1] * 1.01, mean[-1], REWARD_COLOR[reward]))
@@ -173,9 +176,9 @@ if __name__ == "__main__":
                     ylabel="Mean solver-value reward (chips)", ylim=(-0.45, 0.2), fmt="{:+.2f}",
                     reference=(eq_reward, f"equilibrium strategy's own reward ({eq_reward:+.2f})"))
     training_figure(ROOT / "results" / "llm", FIG / "llm_exploitability.png",
-                    "Qwen2.5-0.5B (LoRA): exploitability during GRPO, by reward design")
+                    "Qwen2.5-0.5B, LoRA on the top 8 layers: exploitability during training")
     training_figure(ROOT / "results" / "llm", FIG / "llm_reward.png",
-                    "Qwen2.5-0.5B (LoRA): solver-value reward during GRPO", metric="nash_q_reward",
+                    "Qwen2.5-0.5B: the naive rewards rise while exploitability does not move", metric="nash_q_reward",
                     ylabel="Mean solver-value reward (chips)", fmt="{:+.2f}",
                     reference=(eq_reward, f"equilibrium strategy's own reward ({eq_reward:+.2f})"))
     print("figures written to", FIG)

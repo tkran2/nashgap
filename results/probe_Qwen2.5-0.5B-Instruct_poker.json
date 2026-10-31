@@ -1,0 +1,10 @@
+{
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "adapter": null,
+  "framing": "poker",
+  "probe_accuracy_own_rank": 1.0,
+  "probe_accuracy_shuffled_labels": 0.3402777777777778,
+  "chance_own_rank": 0.3333333333333333,
+  "probe_accuracy_paired": 1.0,
+  "chance_paired": 0.6875
+}

@@ -1,0 +1,5 @@
+{"step": 0, "exploitability": 2343.1542471259672, "greedy_exploitability": 2366.666666666666, "nash_q_reward": -0.9163959609385991, "entropy": 0.38644625372511077, "card_sensitivity": 0.012545814882560414, "time": 198.8817241191864}
+{"step": 10, "exploitability": 1856.5941925480413, "greedy_exploitability": 999.9999999999999, "nash_q_reward": -2.265002226308548, "entropy": 0.6562015087362085, "card_sensitivity": 0.021327868325972103, "time": 410.58465337753296}
+{"step": 20, "exploitability": 3116.253733532603, "greedy_exploitability": 7400.0, "nash_q_reward": -1.8791080319487328, "entropy": 0.7817163555471401, "card_sensitivity": 0.018687526467234747, "time": 591.9034111499786}
+{"step": 30, "exploitability": 1871.2660305281229, "greedy_exploitability": 2366.666666666666, "nash_q_reward": -1.3547289826728777, "entropy": 0.7667090280293605, "card_sensitivity": 0.021441431425600416, "time": 766.4377403259277}
+{"step": 40, "exploitability": 1935.0733836552417, "greedy_exploitability": 1966.6666666666667, "nash_q_reward": -1.4648902680159466, "entropy": 0.8035801750210181, "card_sensitivity": 0.03278461278784028, "time": 2145.5068061351776}

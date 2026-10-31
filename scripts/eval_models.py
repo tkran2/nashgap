@@ -79,7 +79,11 @@ def main():
         if dtype == "auto":
             big = any(s in name for s in ("3B", "4B", "Phi-4-mini", "7B", "8B"))
             dtype = "bfloat16" if big else "float32"
-        report, arrays = evaluate(name, dtype, args.games, args.framings)
+        try:
+            report, arrays = evaluate(name, dtype, args.games, args.framings)
+        except Exception as e:  # a model that fails to load should not stop the others
+            print(f"{slug(name)}: skipped ({type(e).__name__}: {str(e)[:120]})", flush=True)
+            continue
         (OUT / f"{slug(name)}.json").write_text(json.dumps(report, indent=2))
         np.savez_compressed(OUT / f"{slug(name)}.npz", **arrays)
 

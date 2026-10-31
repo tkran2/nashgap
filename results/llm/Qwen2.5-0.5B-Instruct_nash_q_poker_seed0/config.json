@@ -1,0 +1,20 @@
+{
+  "reward": "nash_q",
+  "steps": 30,
+  "batch_size": 32,
+  "group_size": 8,
+  "lr": 1e-05,
+  "beta": 0.04,
+  "clip": 0.2,
+  "refresh": 10,
+  "eval_every": 10,
+  "seed": 0,
+  "extra": {
+    "policy": "llm",
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "game": "leduc",
+    "framing": "poker",
+    "lora_rank": 16,
+    "lora_layers": 8
+  }
+}
