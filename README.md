@@ -1,5 +1,7 @@
 # NashGap
 
+[![CI](https://github.com/tkran2/nashgap/actions/workflows/ci.yml/badge.svg)](https://github.com/tkran2/nashgap/actions/workflows/ci.yml)
+
 How exploitable is a language model at poker, measured exactly rather than by win
 rate? And when you fine-tune it with RL against a game solver, which reward actually
 makes it less exploitable?
