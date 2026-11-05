@@ -169,7 +169,7 @@ for comparison, "check, call, but fold to any bet" scores 1,000 and the equilibr
 
 ```bash
 pip install numpy scipy pytest                # solver and tests
-pytest                                       # 11 solver tests, about 7 s
+pytest                                       # 24 tests (solver, prompts, RL), about 10 s
 python scripts/train_tabular.py --seeds 3     # tabular reward comparison, a few minutes
 pip install torch transformers peft matplotlib
 python scripts/eval_models.py Qwen/Qwen2.5-0.5B-Instruct Qwen/Qwen2.5-1.5B-Instruct
