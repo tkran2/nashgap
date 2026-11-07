@@ -170,13 +170,13 @@ for comparison, "check, call, but fold to any bet" scores 1,000 and the equilibr
 ## Reproduce
 
 ```bash
-pip install numpy scipy pytest                # solver and tests
-pytest                                       # 24 tests (solver, prompts, RL), about 10 s
-python scripts/train_tabular.py --seeds 3     # tabular reward comparison, a few minutes
-pip install torch transformers peft matplotlib
-python scripts/eval_models.py Qwen/Qwen2.5-0.5B-Instruct Qwen/Qwen2.5-1.5B-Instruct
-python scripts/train_llm.py --reward br_q     # GRPO with LoRA; also nash_q, selfplay, distill
-python scripts/plots.py
+pip install -r requirements.txt
+make test                                     # 28 tests (solver, Kuhn closed form, prompts, RL)
+make solve                                    # Leduc: LP value and CFR convergence
+make tabular                                  # tabular reward comparison, a few minutes
+PYTHONPATH=. python scripts/eval_models.py Qwen/Qwen2.5-0.5B-Instruct Qwen/Qwen2.5-1.5B-Instruct
+PYTHONPATH=. python scripts/train_llm.py --reward br_q --steps 30 --lr 1e-5 --beta 0.04
+make figures
 ```
 
 Everything runs on CPU. Frontier models served through APIs only expose sampled
