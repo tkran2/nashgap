@@ -175,7 +175,7 @@ make test                                     # 28 tests (solver, Kuhn closed fo
 make solve                                    # Leduc: LP value and CFR convergence
 make tabular                                  # tabular reward comparison, a few minutes
 PYTHONPATH=. python scripts/eval_models.py Qwen/Qwen2.5-0.5B-Instruct Qwen/Qwen2.5-1.5B-Instruct
-PYTHONPATH=. python scripts/train_llm.py --reward br_q --steps 30 --lr 1e-5 --beta 0.04
+PYTHONPATH=. python scripts/train_llm.py --reward br_q   # GRPO with LoRA; also nash_q, selfplay, distill
 make figures
 ```
 
